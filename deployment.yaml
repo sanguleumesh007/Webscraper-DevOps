@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: scrapy-imdb-deployment
+  labels:
+    app: scrapy-imdb
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: scrapy-imdb
+  template:
+    metadata:
+      labels:
+        app: scrapy-imdb
+    spec:
+      containers:
+        - name: scrapy-imdb-container
+          image: <your-account-id>.dkr.ecr.<your-region>.amazonaws.com/scrapy-imdb:latest
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 250m
+              memory: 256Mi

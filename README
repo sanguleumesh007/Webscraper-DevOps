@@ -1,0 +1,80 @@
+This project is a web scraper designed to extract detailed information from IMDb's Top 50 movies list using Scrapy
+
+******************* How to Run the Application**********************
+Prerequisites: Docker,Kubernetes,AWS,kubectl etc
+
+
+******************* Step-by-Step Instructions***********************
+1) Clone the Repository
+git clone <repository-url>
+cd imdb_scraper
+
+2) Build the Docker Image
+docker build -t scrapy-imdb:latest .
+
+3) Push the Docker Image to AWS ECR
+        Authenticate Docker to your Amazon ECR registry:
+                  aws ecr get-login-password --region <your-region> | docker login --username AWS --password-stdin <your-account-id>.dkr.ecr.<your-region>.amazonaws.com
+        Tag the Docker image:
+                   docker tag scrapy-imdb:latest <your-account-id>.dkr.ecr.<your-region>.amazonaws.com/scrapy
+        Push the image to ECR:
+                  docker push <your-account-id>.dkr.ecr.<your-region>.amazonaws.com/scrapy-imdb:latest
+4) Deploy to AWS EKS
+ Apply the Kubernetes manifests: 
+                                kubectl apply -f deployment.yaml
+                                kubectl apply -f service.yaml
+                                kubectl apply -f hpa.yaml
+5) Monitor the Deployment
+
+kubectl get pods
+kubectl logs -f <pod-name>
+******************************************************************************************
+Libraries Used and Their Purpose:
+1) Scrapy
+Purpose: Scrapy is used to extract detailed information from IMDb's Top 50 movies list.
+How Used:
+Define the spider to navigate and scrape the IMDb website.
+Use XPath selectors to extract movie details (name, year, director, and main stars).
+
+2) Docker
+Purpose: Docker is used to containerize the Scrapy project for easy deployment.
+How Used:
+Create a Dockerfile to define the container environment and install dependencies.
+Build and push the Docker image to AWS ECR.
+
+3) Kubernetes
+Purpose: Kubernetes is used to deploy, manage, and scale the Dockerized Scrapy scraper on AWS EKS.
+How Used:
+Define Deployment, Service, and Horizontal Pod Autoscaler (HPA) in YAML files.
+Apply the manifests to create and manage Kubernetes resources.
+
+4) AWS CLI
+Purpose: AWS CLI is used to interact with Amazon Web Services, particularly for ECR and EKS.
+How Used:
+Authenticate Docker to Amazon ECR.
+Manage and deploy resources to AWS EKS.
+
+5) kubectl
+Purpose: kubectl is the command-line tool for interacting with Kubernetes clusters.
+How Used:
+Apply Kubernetes manifests to create resources.
+Monitor and manage the deployment by viewing pod statuses and logs.
+
+Directory Structure :
+imdb_scraper/
+├── Dockerfile
+├── README.md
+├── deployment.yaml
+├── hpa.yaml
+├── requirements.txt
+├── scrapy.cfg
+├── service.yaml
+└── your_scrapy_project/
+    ├── __init__.py
+    ├── items.py
+    ├── middlewares.py
+    ├── pipelines.py
+    ├── settings.py
+    └── spiders/
+        ├── __init__.py
+        └── top50_movies_spider.py
